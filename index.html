@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Salão — Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <style>
+    body { background:#f8f9fa; font-size:17px; }
+    .navbar-brand { font-weight:700; font-size:1.3rem; }
+    .nav-link { font-size:1rem; font-weight:500; }
+    .card { border-radius:18px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+    .form-control,.form-select,.btn { min-height:46px; font-size:1rem; border-radius:12px; }
+    .btn { padding:.5rem 1.2rem; font-weight:500; }
+    .table th,.table td { vertical-align:middle; padding:.8rem 1rem; border-color:#eaeaea; }
+    .table { border-radius:14px; overflow:hidden; }
+    .badge-pago { background:#d4edda; color:#1a6b35; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
+    .badge-pendente { background:#fff3cd; color:#856404; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
+    .badge-ativo { background:#d1fae5; color:#065f46; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
+    .badge-inativo { background:#fef3c7; color:#92400e; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
+    .demo-badge { background:#0d6efd22; color:#0d6efd; border-radius:8px; padding:3px 12px; font-size:.8rem; font-weight:700; letter-spacing:.05em; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .stat-card { border-radius:16px; padding:20px 24px; color:#fff; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <span class="navbar-brand"><i class="bi bi-scissors me-2"></i>Salão</span>
+  <span class="demo-badge ms-2">DEMO</span>
+  <div class="ms-auto d-flex gap-2">
+    <button class="btn btn-outline-light btn-sm" onclick="showSection('dashboard')"><i class="bi bi-house"></i> Painel</button>
+    <button class="btn btn-outline-light btn-sm" onclick="showSection('clientes')"><i class="bi bi-people"></i> Clientes</button>
+    <button class="btn btn-outline-light btn-sm" onclick="showSection('funcionarios')"><i class="bi bi-person-badge"></i> Funcionários</button>
+    <button class="btn btn-outline-light btn-sm" onclick="showSection('relatorio')"><i class="bi bi-bar-chart"></i> Relatório</button>
+  </div>
+</nav>
+
+<div class="container mt-4 mb-5" style="max-width:1100px;">
+
+  <!-- DASHBOARD -->
+  <div id="sec-dashboard" class="section active">
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">
+          <div style="font-size:2rem;font-weight:700;">12</div>
+          <div style="font-size:.9rem;opacity:.85;">Agendamentos hoje</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#059669,#10b981)">
+          <div style="font-size:2rem;font-weight:700;">R$840</div>
+          <div style="font-size:.9rem;opacity:.85;">Receita do dia</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">
+          <div style="font-size:2rem;font-weight:700;">47</div>
+          <div style="font-size:.9rem;opacity:.85;">Clientes este mês</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">
+          <div style="font-size:2rem;font-weight:700;">3</div>
+          <div style="font-size:.9rem;opacity:.85;">Funcionários ativos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <h4 class="fw-bold mb-3">Novo Agendamento</h4>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Cliente</label><input class="form-control" placeholder="Nome do cliente" /></div>
+        <div class="col-md-4"><label class="form-label">Telefone</label><input class="form-control" placeholder="(51) 99999-9999" /></div>
+        <div class="col-md-4"><label class="form-label">CPF</label><input class="form-control" placeholder="000.000.000-00" /></div>
+        <div class="col-md-4"><label class="form-label">Serviço</label>
+          <select class="form-select"><option>Corte Feminino — R$80</option><option>Coloração — R$150</option><option>Escova — R$60</option><option>Manicure — R$45</option><option>Pedicure — R$50</option></select>
+        </div>
+        <div class="col-md-3"><label class="form-label">Valor a cobrar</label><input class="form-control" placeholder="R$" /></div>
+        <div class="col-md-3"><label class="form-label">Valor pago</label><input class="form-control" placeholder="R$" /></div>
+        <div class="col-md-4"><label class="form-label">Data e Hora</label><input type="datetime-local" class="form-control" /></div>
+        <div class="col-md-4"><label class="form-label">Funcionário(a)</label>
+          <select class="form-select"><option>Ana Lima</option><option>Carla Souza</option><option>Marcones</option></select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <button class="btn btn-success w-100" onclick="alert('Demo — não salva dados reais.')"><i class="bi bi-calendar-plus me-1"></i>Agendar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">Agendamentos</h5>
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-outline-secondary active">Hoje</button>
+          <button class="btn btn-outline-secondary">Semana</button>
+          <button class="btn btn-outline-secondary">Mês</button>
+          <button class="btn btn-outline-secondary">Todos</button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light"><tr><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Pago</th><th>Data/Hora</th><th>Funcionária</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Maria Silva</td><td>Coloração</td><td>R$150</td><td>R$150</td><td>10/07 09:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Fernanda Costa</td><td>Corte Feminino</td><td>R$80</td><td>R$80</td><td>10/07 10:30</td><td>Carla Souza</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Juliana Martins</td><td>Escova</td><td>R$60</td><td>R$0</td><td>10/07 11:00</td><td>Ana Lima</td><td><span class="badge-pendente">Pendente</span></td></tr>
+            <tr><td>Roberta Alves</td><td>Manicure + Pedicure</td><td>R$95</td><td>R$95</td><td>10/07 13:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Camila Nunes</td><td>Coloração</td><td>R$150</td><td>R$0</td><td>10/07 14:30</td><td>Carla Souza</td><td><span class="badge-pendente">Pendente</span></td></tr>
+            <tr><td>Tatiane Rocha</td><td>Corte Feminino</td><td>R$80</td><td>R$80</td><td>10/07 15:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Adriana Lima</td><td>Escova</td><td>R$60</td><td>R$60</td><td>10/07 16:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div id="sec-clientes" class="section">
+    <div class="card p-4">
+      <h3 class="fw-bold mb-3">Consulta de Clientes</h3>
+      <div class="d-flex gap-2 mb-3">
+        <input class="form-control" placeholder="Buscar cliente, telefone ou CPF" style="max-width:320px;" />
+        <select class="form-select" style="max-width:160px;"><option>Todos</option><option>Ativo</option><option>Inativo</option></select>
+        <button class="btn btn-primary">Buscar</button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light"><tr><th>Nome</th><th>Telefone</th><th>CPF</th><th>Total visitas</th><th>Última visita</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Maria Silva</td><td>(51) 98765-4321</td><td>123.456.789-00</td><td>8</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+            <tr><td>Fernanda Costa</td><td>(51) 99887-6655</td><td>234.567.890-11</td><td>5</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+            <tr><td>Juliana Martins</td><td>(51) 97654-3210</td><td>345.678.901-22</td><td>12</td><td>08/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+            <tr><td>Roberta Alves</td><td>(51) 96543-2109</td><td>456.789.012-33</td><td>3</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+            <tr><td>Camila Nunes</td><td>(51) 95432-1098</td><td>567.890.123-44</td><td>7</td><td>05/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+            <tr><td>Patricia Melo</td><td>(51) 94321-0987</td><td>678.901.234-55</td><td>2</td><td>01/06/2026</td><td><span class="badge-inativo">Inativo</span></td></tr>
+            <tr><td>Sandra Oliveira</td><td>(51) 93210-9876</td><td>789.012.345-66</td><td>15</td><td>09/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+            <tr><td>Adriana Lima</td><td>(51) 92109-8765</td><td>890.123.456-77</td><td>4</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUNCIONÁRIOS -->
+  <div id="sec-funcionarios" class="section">
+    <div class="card p-4">
+      <h3 class="fw-bold mb-3">Funcionários do Salão</h3>
+      <div class="row g-2 mb-4">
+        <div class="col-md-5"><input class="form-control" placeholder="Nome do Funcionário" /></div>
+        <div class="col-md-4"><input class="form-control" placeholder="Cargo/Função" /></div>
+        <div class="col-md-3"><button class="btn btn-success w-100" onclick="alert('Demo — não salva dados reais.')"><i class="bi bi-person-plus me-1"></i>Adicionar</button></div>
+      </div>
+      <input class="form-control mb-3" placeholder="Buscar por nome ou cargo..." style="max-width:320px;" />
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light"><tr><th>ID</th><th>Nome</th><th>Cargo</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Ana Lima</td><td>Cabeleireira</td><td><span class="badge-ativo">Ativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+            <tr><td>2</td><td>Carla Souza</td><td>Colorista</td><td><span class="badge-ativo">Ativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+            <tr><td>3</td><td>Marcones</td><td>Manicure/Pedicure</td><td><span class="badge-ativo">Ativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+            <tr><td>4</td><td>Luisa Ferreira</td><td>Recepcionista</td><td><span class="badge-inativo">Inativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATÓRIO -->
+  <div id="sec-relatorio" class="section">
+    <div class="card p-4">
+      <h3 class="fw-bold mb-3">Relatório de Agendamentos</h3>
+      <div class="row g-2 mb-3 align-items-end">
+        <div class="col-md-4"><input class="form-control" placeholder="Filtrar por cliente" /></div>
+        <div class="col-md-2"><input type="date" class="form-control" /></div>
+        <div class="col-md-2"><input type="date" class="form-control" /></div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Filtrar</button></div>
+        <div class="col-md-2"><button class="btn btn-secondary w-100">Limpar</button></div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-success">R$3.240</div><div class="text-muted small">Receita total</div></div></div>
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-primary">47</div><div class="text-muted small">Atendimentos</div></div></div>
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-warning">R$680</div><div class="text-muted small">A receber</div></div></div>
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-info">R$68,9</div><div class="text-muted small">Ticket médio</div></div></div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light"><tr><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Pago</th><th>Data/Hora</th><th>Funcionária</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Maria Silva</td><td>Coloração</td><td>R$150</td><td>R$150</td><td>10/07 09:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Fernanda Costa</td><td>Corte Feminino</td><td>R$80</td><td>R$80</td><td>10/07 10:30</td><td>Carla Souza</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Juliana Martins</td><td>Escova</td><td>R$60</td><td>R$0</td><td>10/07 11:00</td><td>Ana Lima</td><td><span class="badge-pendente">Pendente</span></td></tr>
+            <tr><td>Roberta Alves</td><td>Manicure + Pedicure</td><td>R$95</td><td>R$95</td><td>10/07 13:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Camila Nunes</td><td>Coloração</td><td>R$150</td><td>R$0</td><td>10/07 14:30</td><td>Carla Souza</td><td><span class="badge-pendente">Pendente</span></td></tr>
+            <tr><td>Sandra Oliveira</td><td>Corte + Escova</td><td>R$140</td><td>R$140</td><td>09/07 15:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Adriana Lima</td><td>Escova</td><td>R$60</td><td>R$60</td><td>09/07 16:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Patricia Melo</td><td>Manicure</td><td>R$45</td><td>R$45</td><td>08/07 10:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
+            <tr><td>Tatiane Rocha</td><td>Coloração</td><td>R$150</td><td>R$150</td><td>08/07 13:00</td><td>Carla Souza</td><td><span class="badge-pago">Pago</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>
