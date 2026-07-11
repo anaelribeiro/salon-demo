@@ -1,218 +1,382 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Salão — Demo</title>
+  <title>Salon Management — Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
   <style>
-    body { background:#f8f9fa; font-size:17px; }
-    .navbar-brand { font-weight:700; font-size:1.3rem; }
-    .nav-link { font-size:1rem; font-weight:500; }
-    .card { border-radius:18px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
-    .form-control,.form-select,.btn { min-height:46px; font-size:1rem; border-radius:12px; }
-    .btn { padding:.5rem 1.2rem; font-weight:500; }
-    .table th,.table td { vertical-align:middle; padding:.8rem 1rem; border-color:#eaeaea; }
-    .table { border-radius:14px; overflow:hidden; }
-    .badge-pago { background:#d4edda; color:#1a6b35; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
-    .badge-pendente { background:#fff3cd; color:#856404; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
-    .badge-ativo { background:#d1fae5; color:#065f46; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
-    .badge-inativo { background:#fef3c7; color:#92400e; border-radius:8px; padding:4px 10px; font-size:.85rem; font-weight:600; }
-    .demo-badge { background:#0d6efd22; color:#0d6efd; border-radius:8px; padding:3px 12px; font-size:.8rem; font-weight:700; letter-spacing:.05em; }
+    body { background:#f4f6fb; font-family:'Segoe UI',Arial,sans-serif; font-size:16px; }
+    .navbar-brand { font-weight:800; font-size:1.25rem; letter-spacing:-.5px; }
+    .demo-badge { background:#e0e7ff; color:#4f46e5; border-radius:6px; padding:2px 10px; font-size:.75rem; font-weight:700; letter-spacing:.06em; }
+    .nav-btn { border-radius:10px; font-weight:600; font-size:.9rem; }
+    .btn-new { background:#059669; border:none; color:#fff; border-radius:10px; font-weight:700; }
+    .btn-new:hover { background:#047857; color:#fff; }
+
+    /* Stat cards */
+    .stat-card { border-radius:16px; padding:22px 24px; color:#fff; border:none; }
+    .stat-card .num { font-size:2.2rem; font-weight:800; line-height:1; }
+    .stat-card .lbl { font-size:.85rem; opacity:.85; margin-top:4px; }
+
+    /* Content cards */
+    .content-card { background:#fff; border-radius:16px; box-shadow:0 1px 8px rgba(0,0,0,.07); border:none; }
     .section { display:none; }
     .section.active { display:block; }
-    .stat-card { border-radius:16px; padding:20px 24px; color:#fff; }
+
+    /* Table */
+    .table th { background:#f8f9fc; font-weight:700; font-size:.88rem; text-transform:uppercase; letter-spacing:.04em; color:#64748b; border-bottom:2px solid #e2e8f0; }
+    .table td { vertical-align:middle; border-color:#f1f5f9; font-size:.95rem; }
+    .table tbody tr:hover { background:#f8fafc; }
+
+    /* Badges */
+    .badge-paid     { background:#dcfce7; color:#166534; border-radius:8px; padding:4px 12px; font-size:.82rem; font-weight:700; }
+    .badge-pending  { background:#fef9c3; color:#854d0e; border-radius:8px; padding:4px 12px; font-size:.82rem; font-weight:700; }
+    .badge-active   { background:#dcfce7; color:#166534; border-radius:8px; padding:4px 12px; font-size:.82rem; font-weight:700; }
+    .badge-inactive { background:#fef3c7; color:#92400e; border-radius:8px; padding:4px 12px; font-size:.82rem; font-weight:700; }
+
+    /* Filter tabs */
+    .filter-tabs .btn { border-radius:8px; font-size:.88rem; font-weight:600; padding:5px 14px; }
+
+    /* Form */
+    .form-label { font-weight:600; font-size:.9rem; color:#374151; margin-bottom:4px; }
+    .form-control, .form-select { border-radius:10px; border:1.5px solid #e2e8f0; font-size:.95rem; padding:.55rem .9rem; }
+    .form-control:focus, .form-select:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.1); }
+
+    /* Toast */
+    .demo-toast { position:fixed; bottom:28px; right:28px; z-index:9999; min-width:300px; border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.15); }
+
+    /* Search highlight */
+    .highlight { background:#fef9c3; border-radius:3px; }
   </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-  <span class="navbar-brand"><i class="bi bi-scissors me-2"></i>Salão</span>
-  <span class="demo-badge ms-2">DEMO</span>
-  <div class="ms-auto d-flex gap-2">
-    <button class="btn btn-outline-light btn-sm" onclick="showSection('dashboard')"><i class="bi bi-house"></i> Painel</button>
-    <button class="btn btn-outline-light btn-sm" onclick="showSection('clientes')"><i class="bi bi-people"></i> Clientes</button>
-    <button class="btn btn-outline-light btn-sm" onclick="showSection('funcionarios')"><i class="bi bi-person-badge"></i> Funcionários</button>
-    <button class="btn btn-outline-light btn-sm" onclick="showSection('relatorio')"><i class="bi bi-bar-chart"></i> Relatório</button>
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-3 py-2">
+  <div class="d-flex align-items-center gap-2">
+    <span class="navbar-brand mb-0"><i class="bi bi-scissors me-2"></i>Salon</span>
+    <span class="demo-badge">DEMO</span>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <button class="btn btn-outline-light btn-sm nav-btn" onclick="show('dashboard')"><i class="bi bi-house me-1"></i>Dashboard</button>
+    <button class="btn btn-outline-light btn-sm nav-btn" onclick="show('clients')"><i class="bi bi-people me-1"></i>Clients</button>
+    <button class="btn btn-outline-light btn-sm nav-btn" onclick="show('staff')"><i class="bi bi-person-badge me-1"></i>Staff</button>
+    <button class="btn btn-outline-light btn-sm nav-btn" onclick="show('report')"><i class="bi bi-bar-chart me-1"></i>Report</button>
+    <button class="btn btn-new btn-sm px-3" onclick="show('new-appointment')"><i class="bi bi-calendar-plus me-1"></i>New Appointment</button>
   </div>
 </nav>
 
-<div class="container mt-4 mb-5" style="max-width:1100px;">
+<div class="container-fluid px-4 py-4" style="max-width:1200px;margin:auto;">
 
   <!-- DASHBOARD -->
   <div id="sec-dashboard" class="section active">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="fw-bold mb-0">Dashboard</h4>
+        <div class="text-muted" style="font-size:.88rem;">Thursday, July 10, 2026</div>
+      </div>
+      <button class="btn btn-new px-4" onclick="show('new-appointment')"><i class="bi bi-calendar-plus me-1"></i>New Appointment</button>
+    </div>
+
+    <!-- Stats -->
     <div class="row g-3 mb-4">
-      <div class="col-6 col-md-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">
-          <div style="font-size:2rem;font-weight:700;">12</div>
-          <div style="font-size:.9rem;opacity:.85;">Agendamentos hoje</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#059669,#10b981)">
-          <div style="font-size:2rem;font-weight:700;">R$840</div>
-          <div style="font-size:.9rem;opacity:.85;">Receita do dia</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">
-          <div style="font-size:2rem;font-weight:700;">47</div>
-          <div style="font-size:.9rem;opacity:.85;">Clientes este mês</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">
-          <div style="font-size:2rem;font-weight:700;">3</div>
-          <div style="font-size:.9rem;opacity:.85;">Funcionários ativos</div>
-        </div>
-      </div>
+      <div class="col-6 col-md-3"><div class="stat-card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)"><div class="num">12</div><div class="lbl">Appointments today</div></div></div>
+      <div class="col-6 col-md-3"><div class="stat-card" style="background:linear-gradient(135deg,#059669,#10b981)"><div class="num">$840</div><div class="lbl">Today's revenue</div></div></div>
+      <div class="col-6 col-md-3"><div class="stat-card" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"><div class="num">47</div><div class="lbl">Clients this month</div></div></div>
+      <div class="col-6 col-md-3"><div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><div class="num">3</div><div class="lbl">Active staff</div></div></div>
     </div>
 
-    <div class="card p-4 mb-4">
-      <h4 class="fw-bold mb-3">Novo Agendamento</h4>
-      <div class="row g-3">
-        <div class="col-md-4"><label class="form-label">Cliente</label><input class="form-control" placeholder="Nome do cliente" /></div>
-        <div class="col-md-4"><label class="form-label">Telefone</label><input class="form-control" placeholder="(51) 99999-9999" /></div>
-        <div class="col-md-4"><label class="form-label">CPF</label><input class="form-control" placeholder="000.000.000-00" /></div>
-        <div class="col-md-4"><label class="form-label">Serviço</label>
-          <select class="form-select"><option>Corte Feminino — R$80</option><option>Coloração — R$150</option><option>Escova — R$60</option><option>Manicure — R$45</option><option>Pedicure — R$50</option></select>
-        </div>
-        <div class="col-md-3"><label class="form-label">Valor a cobrar</label><input class="form-control" placeholder="R$" /></div>
-        <div class="col-md-3"><label class="form-label">Valor pago</label><input class="form-control" placeholder="R$" /></div>
-        <div class="col-md-4"><label class="form-label">Data e Hora</label><input type="datetime-local" class="form-control" /></div>
-        <div class="col-md-4"><label class="form-label">Funcionário(a)</label>
-          <select class="form-select"><option>Ana Lima</option><option>Carla Souza</option><option>Marcones</option></select>
-        </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button class="btn btn-success w-100" onclick="alert('Demo — não salva dados reais.')"><i class="bi bi-calendar-plus me-1"></i>Agendar</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card p-3">
+    <!-- Appointments table -->
+    <div class="content-card p-4">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold mb-0">Agendamentos</h5>
-        <div class="btn-group btn-group-sm">
-          <button class="btn btn-outline-secondary active">Hoje</button>
-          <button class="btn btn-outline-secondary">Semana</button>
-          <button class="btn btn-outline-secondary">Mês</button>
-          <button class="btn btn-outline-secondary">Todos</button>
+        <h5 class="fw-bold mb-0">Today's Appointments</h5>
+        <div class="filter-tabs d-flex gap-1">
+          <button class="btn btn-primary btn-sm" onclick="filterAppt(this,'today')">Today</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="filterAppt(this,'week')">Week</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="filterAppt(this,'month')">Month</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="filterAppt(this,'all')">All</button>
         </div>
       </div>
       <div class="table-responsive">
-        <table class="table table-hover mb-0">
-          <thead class="table-light"><tr><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Pago</th><th>Data/Hora</th><th>Funcionária</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Maria Silva</td><td>Coloração</td><td>R$150</td><td>R$150</td><td>10/07 09:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Fernanda Costa</td><td>Corte Feminino</td><td>R$80</td><td>R$80</td><td>10/07 10:30</td><td>Carla Souza</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Juliana Martins</td><td>Escova</td><td>R$60</td><td>R$0</td><td>10/07 11:00</td><td>Ana Lima</td><td><span class="badge-pendente">Pendente</span></td></tr>
-            <tr><td>Roberta Alves</td><td>Manicure + Pedicure</td><td>R$95</td><td>R$95</td><td>10/07 13:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Camila Nunes</td><td>Coloração</td><td>R$150</td><td>R$0</td><td>10/07 14:30</td><td>Carla Souza</td><td><span class="badge-pendente">Pendente</span></td></tr>
-            <tr><td>Tatiane Rocha</td><td>Corte Feminino</td><td>R$80</td><td>R$80</td><td>10/07 15:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Adriana Lima</td><td>Escova</td><td>R$60</td><td>R$60</td><td>10/07 16:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
-          </tbody>
+        <table class="table mb-0" id="appt-table">
+          <thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Paid</th><th>Date/Time</th><th>Staff</th><th>Status</th></tr></thead>
+          <tbody id="appt-body"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- CLIENTES -->
-  <div id="sec-clientes" class="section">
-    <div class="card p-4">
-      <h3 class="fw-bold mb-3">Consulta de Clientes</h3>
-      <div class="d-flex gap-2 mb-3">
-        <input class="form-control" placeholder="Buscar cliente, telefone ou CPF" style="max-width:320px;" />
-        <select class="form-select" style="max-width:160px;"><option>Todos</option><option>Ativo</option><option>Inativo</option></select>
-        <button class="btn btn-primary">Buscar</button>
+  <!-- NEW APPOINTMENT -->
+  <div id="sec-new-appointment" class="section">
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <button class="btn btn-outline-secondary btn-sm" onclick="show('dashboard')"><i class="bi bi-arrow-left"></i></button>
+      <h4 class="fw-bold mb-0">New Appointment</h4>
+    </div>
+    <div class="content-card p-4" style="max-width:720px;">
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Client name</label><input class="form-control" placeholder="e.g. Maria Silva" /></div>
+        <div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" placeholder="(555) 000-0000" /></div>
+        <div class="col-md-6"><label class="form-label">Service</label>
+          <select class="form-select" id="appt-service" onchange="fillPrice()">
+            <option value="">Select a service</option>
+            <option value="80">Women's Haircut — $80</option>
+            <option value="150">Hair Coloring — $150</option>
+            <option value="60">Blowout — $60</option>
+            <option value="45">Manicure — $45</option>
+            <option value="50">Pedicure — $50</option>
+            <option value="95">Manicure + Pedicure — $95</option>
+            <option value="140">Haircut + Blowout — $140</option>
+          </select>
+        </div>
+        <div class="col-md-3"><label class="form-label">Amount charged</label><input class="form-control" id="appt-amount" placeholder="$" /></div>
+        <div class="col-md-3"><label class="form-label">Amount paid</label><input class="form-control" placeholder="$" /></div>
+        <div class="col-md-6"><label class="form-label">Date &amp; Time</label><input type="datetime-local" class="form-control" /></div>
+        <div class="col-md-6"><label class="form-label">Staff member</label>
+          <select class="form-select">
+            <option>Ana Lima — Hairstylist</option>
+            <option>Carla Souza — Colorist</option>
+            <option>Marcones — Nail Technician</option>
+          </select>
+        </div>
+        <div class="col-12 d-flex gap-2 mt-2">
+          <button class="btn btn-new px-4" onclick="demoSubmit()"><i class="bi bi-check-lg me-1"></i>Schedule Appointment</button>
+          <button class="btn btn-outline-secondary px-4" onclick="show('dashboard')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTS -->
+  <div id="sec-clients" class="section">
+    <h4 class="fw-bold mb-4">Clients</h4>
+    <div class="content-card p-4">
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+        <input class="form-control" id="client-search" placeholder="Search by name or phone..." style="max-width:300px;" oninput="filterClients()" />
+        <select class="form-select" id="client-status" style="max-width:150px;" onchange="filterClients()">
+          <option value="">All</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
       </div>
       <div class="table-responsive">
-        <table class="table table-hover">
-          <thead class="table-light"><tr><th>Nome</th><th>Telefone</th><th>CPF</th><th>Total visitas</th><th>Última visita</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Maria Silva</td><td>(51) 98765-4321</td><td>123.456.789-00</td><td>8</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-            <tr><td>Fernanda Costa</td><td>(51) 99887-6655</td><td>234.567.890-11</td><td>5</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-            <tr><td>Juliana Martins</td><td>(51) 97654-3210</td><td>345.678.901-22</td><td>12</td><td>08/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-            <tr><td>Roberta Alves</td><td>(51) 96543-2109</td><td>456.789.012-33</td><td>3</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-            <tr><td>Camila Nunes</td><td>(51) 95432-1098</td><td>567.890.123-44</td><td>7</td><td>05/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-            <tr><td>Patricia Melo</td><td>(51) 94321-0987</td><td>678.901.234-55</td><td>2</td><td>01/06/2026</td><td><span class="badge-inativo">Inativo</span></td></tr>
-            <tr><td>Sandra Oliveira</td><td>(51) 93210-9876</td><td>789.012.345-66</td><td>15</td><td>09/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-            <tr><td>Adriana Lima</td><td>(51) 92109-8765</td><td>890.123.456-77</td><td>4</td><td>10/07/2026</td><td><span class="badge-ativo">Ativo</span></td></tr>
-          </tbody>
+        <table class="table mb-0">
+          <thead><tr><th>Name</th><th>Phone</th><th>Total visits</th><th>Last visit</th><th>Status</th></tr></thead>
+          <tbody id="clients-body"></tbody>
+        </table>
+        <div id="clients-empty" class="text-center text-muted py-4" style="display:none;">No clients found.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAFF -->
+  <div id="sec-staff" class="section">
+    <h4 class="fw-bold mb-4">Salon Staff</h4>
+    <div class="content-card p-4">
+      <input class="form-control mb-3" id="staff-search" placeholder="Search by name or role..." style="max-width:300px;" oninput="filterStaff()" />
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Name</th><th>Role</th><th>Appointments this month</th><th>Status</th></tr></thead>
+          <tbody id="staff-body"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- FUNCIONÁRIOS -->
-  <div id="sec-funcionarios" class="section">
-    <div class="card p-4">
-      <h3 class="fw-bold mb-3">Funcionários do Salão</h3>
-      <div class="row g-2 mb-4">
-        <div class="col-md-5"><input class="form-control" placeholder="Nome do Funcionário" /></div>
-        <div class="col-md-4"><input class="form-control" placeholder="Cargo/Função" /></div>
-        <div class="col-md-3"><button class="btn btn-success w-100" onclick="alert('Demo — não salva dados reais.')"><i class="bi bi-person-plus me-1"></i>Adicionar</button></div>
+  <!-- REPORT -->
+  <div id="sec-report" class="section">
+    <h4 class="fw-bold mb-4">Appointments Report</h4>
+    <div class="content-card p-4">
+      <div class="d-flex gap-2 mb-4 flex-wrap align-items-end">
+        <div><label class="form-label">Filter by client</label><input class="form-control" id="report-search" placeholder="Client name..." style="min-width:200px;" oninput="filterReport()" /></div>
+        <div><label class="form-label">From</label><input type="date" class="form-control" id="report-from" onchange="filterReport()" /></div>
+        <div><label class="form-label">To</label><input type="date" class="form-control" id="report-to" onchange="filterReport()" /></div>
+        <button class="btn btn-outline-secondary" onclick="clearReport()">Clear</button>
       </div>
-      <input class="form-control mb-3" placeholder="Buscar por nome ou cargo..." style="max-width:320px;" />
+      <div class="row g-3 mb-4" id="report-stats"></div>
       <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead class="table-light"><tr><th>ID</th><th>Nome</th><th>Cargo</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>Ana Lima</td><td>Cabeleireira</td><td><span class="badge-ativo">Ativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
-            <tr><td>2</td><td>Carla Souza</td><td>Colorista</td><td><span class="badge-ativo">Ativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
-            <tr><td>3</td><td>Marcones</td><td>Manicure/Pedicure</td><td><span class="badge-ativo">Ativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
-            <tr><td>4</td><td>Luisa Ferreira</td><td>Recepcionista</td><td><span class="badge-inativo">Inativo</span></td><td><button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
-          </tbody>
+        <table class="table mb-0">
+          <thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Paid</th><th>Date/Time</th><th>Staff</th><th>Status</th></tr></thead>
+          <tbody id="report-body"></tbody>
         </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- RELATÓRIO -->
-  <div id="sec-relatorio" class="section">
-    <div class="card p-4">
-      <h3 class="fw-bold mb-3">Relatório de Agendamentos</h3>
-      <div class="row g-2 mb-3 align-items-end">
-        <div class="col-md-4"><input class="form-control" placeholder="Filtrar por cliente" /></div>
-        <div class="col-md-2"><input type="date" class="form-control" /></div>
-        <div class="col-md-2"><input type="date" class="form-control" /></div>
-        <div class="col-md-2"><button class="btn btn-primary w-100">Filtrar</button></div>
-        <div class="col-md-2"><button class="btn btn-secondary w-100">Limpar</button></div>
-      </div>
-
-      <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-success">R$3.240</div><div class="text-muted small">Receita total</div></div></div>
-        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-primary">47</div><div class="text-muted small">Atendimentos</div></div></div>
-        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-warning">R$680</div><div class="text-muted small">A receber</div></div></div>
-        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="fw-bold fs-4 text-info">R$68,9</div><div class="text-muted small">Ticket médio</div></div></div>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-          <thead class="table-light"><tr><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Pago</th><th>Data/Hora</th><th>Funcionária</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Maria Silva</td><td>Coloração</td><td>R$150</td><td>R$150</td><td>10/07 09:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Fernanda Costa</td><td>Corte Feminino</td><td>R$80</td><td>R$80</td><td>10/07 10:30</td><td>Carla Souza</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Juliana Martins</td><td>Escova</td><td>R$60</td><td>R$0</td><td>10/07 11:00</td><td>Ana Lima</td><td><span class="badge-pendente">Pendente</span></td></tr>
-            <tr><td>Roberta Alves</td><td>Manicure + Pedicure</td><td>R$95</td><td>R$95</td><td>10/07 13:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Camila Nunes</td><td>Coloração</td><td>R$150</td><td>R$0</td><td>10/07 14:30</td><td>Carla Souza</td><td><span class="badge-pendente">Pendente</span></td></tr>
-            <tr><td>Sandra Oliveira</td><td>Corte + Escova</td><td>R$140</td><td>R$140</td><td>09/07 15:00</td><td>Ana Lima</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Adriana Lima</td><td>Escova</td><td>R$60</td><td>R$60</td><td>09/07 16:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Patricia Melo</td><td>Manicure</td><td>R$45</td><td>R$45</td><td>08/07 10:00</td><td>Marcones</td><td><span class="badge-pago">Pago</span></td></tr>
-            <tr><td>Tatiane Rocha</td><td>Coloração</td><td>R$150</td><td>R$150</td><td>08/07 13:00</td><td>Carla Souza</td><td><span class="badge-pago">Pago</span></td></tr>
-          </tbody>
-        </table>
+        <div id="report-empty" class="text-center text-muted py-4" style="display:none;">No records found.</div>
       </div>
     </div>
   </div>
 
 </div>
 
+<!-- Toast -->
+<div class="demo-toast toast align-items-center text-bg-success border-0" id="demo-toast" role="alert">
+  <div class="d-flex">
+    <div class="toast-body fw-semibold"><i class="bi bi-check-circle me-2"></i>This is a demo — data is not saved.</div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function showSection(name) {
+// ── DATA ──────────────────────────────────────────────────────────────────
+const APPTS = [
+  { client:'Maria Silva',    service:'Hair Coloring',      amount:150, paid:150, date:'07/10 09:00', staff:'Ana Lima',    status:'Paid',    period:'today' },
+  { client:'Fernanda Costa', service:"Women's Haircut",    amount:80,  paid:80,  date:'07/10 10:30', staff:'Carla Souza', status:'Paid',    period:'today' },
+  { client:'Juliana Martins',service:'Blowout',            amount:60,  paid:0,   date:'07/10 11:00', staff:'Ana Lima',    status:'Pending', period:'today' },
+  { client:'Roberta Alves',  service:'Manicure + Pedicure',amount:95,  paid:95,  date:'07/10 13:00', staff:'Marcones',   status:'Paid',    period:'today' },
+  { client:'Camila Nunes',   service:'Hair Coloring',      amount:150, paid:0,   date:'07/10 14:30', staff:'Carla Souza',status:'Pending', period:'today' },
+  { client:'Tatiane Rocha',  service:"Women's Haircut",    amount:80,  paid:80,  date:'07/10 15:00', staff:'Ana Lima',    status:'Paid',    period:'today' },
+  { client:'Adriana Lima',   service:'Blowout',            amount:60,  paid:60,  date:'07/10 16:00', staff:'Marcones',   status:'Paid',    period:'today' },
+  { client:'Sandra Oliveira',service:'Haircut + Blowout',  amount:140, paid:140, date:'07/09 15:00', staff:'Ana Lima',    status:'Paid',    period:'week'  },
+  { client:'Patricia Melo',  service:'Manicure',           amount:45,  paid:45,  date:'07/08 10:00', staff:'Marcones',   status:'Paid',    period:'week'  },
+  { client:'Beatriz Alves',  service:'Hair Coloring',      amount:150, paid:150, date:'07/07 11:00', staff:'Carla Souza',status:'Paid',    period:'week'  },
+  { client:'Larissa Pinto',  service:"Women's Haircut",    amount:80,  paid:0,   date:'07/05 09:30', staff:'Ana Lima',    status:'Pending', period:'month' },
+  { client:'Vanessa Lima',   service:'Blowout',            amount:60,  paid:60,  date:'07/03 14:00', staff:'Carla Souza',status:'Paid',    period:'month' },
+];
+
+const CLIENTS = [
+  { name:'Maria Silva',    phone:'(555) 987-6543', visits:8,  last:'07/10/2026', status:'Active'   },
+  { name:'Fernanda Costa', phone:'(555) 998-8766', visits:5,  last:'07/10/2026', status:'Active'   },
+  { name:'Juliana Martins',phone:'(555) 765-4321', visits:12, last:'07/08/2026', status:'Active'   },
+  { name:'Roberta Alves',  phone:'(555) 654-3210', visits:3,  last:'07/10/2026', status:'Active'   },
+  { name:'Camila Nunes',   phone:'(555) 543-2109', visits:7,  last:'07/05/2026', status:'Active'   },
+  { name:'Patricia Melo',  phone:'(555) 432-1098', visits:2,  last:'06/01/2026', status:'Inactive' },
+  { name:'Sandra Oliveira',phone:'(555) 321-0987', visits:15, last:'07/09/2026', status:'Active'   },
+  { name:'Adriana Lima',   phone:'(555) 210-9876', visits:4,  last:'07/10/2026', status:'Active'   },
+  { name:'Beatriz Alves',  phone:'(555) 111-2233', visits:6,  last:'07/07/2026', status:'Active'   },
+  { name:'Larissa Pinto',  phone:'(555) 444-5566', visits:1,  last:'07/05/2026', status:'Active'   },
+];
+
+const STAFF = [
+  { name:'Ana Lima',      role:'Hairstylist',     appts:18, status:'Active'   },
+  { name:'Carla Souza',   role:'Colorist',        appts:14, status:'Active'   },
+  { name:'Marcones',      role:'Nail Technician', appts:12, status:'Active'   },
+  { name:'Luisa Ferreira',role:'Receptionist',    appts:0,  status:'Inactive' },
+];
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function statusBadge(s) {
+  if (s==='Paid'||s==='Active')   return `<span class="badge-paid">${s}</span>`;
+  if (s==='Pending')              return `<span class="badge-pending">${s}</span>`;
+  if (s==='Inactive')             return `<span class="badge-inactive">${s}</span>`;
+  return s;
+}
+
+function renderAppts(list) {
+  document.getElementById('appt-body').innerHTML = list.map(a => `
+    <tr>
+      <td>${a.client}</td><td>${a.service}</td>
+      <td>$${a.amount}</td><td>$${a.paid}</td>
+      <td>${a.date}</td><td>${a.staff}</td>
+      <td>${statusBadge(a.status)}</td>
+    </tr>`).join('');
+}
+
+function renderClients(list) {
+  const body = document.getElementById('clients-body');
+  const empty = document.getElementById('clients-empty');
+  body.innerHTML = list.map(c => `
+    <tr>
+      <td>${c.name}</td><td>${c.phone}</td>
+      <td>${c.visits}</td><td>${c.last}</td>
+      <td>${statusBadge(c.status)}</td>
+    </tr>`).join('');
+  empty.style.display = list.length ? 'none' : 'block';
+}
+
+function renderStaff(list) {
+  document.getElementById('staff-body').innerHTML = list.map(s => `
+    <tr>
+      <td>${s.name}</td><td>${s.role}</td>
+      <td>${s.appts}</td><td>${statusBadge(s.status)}</td>
+    </tr>`).join('');
+}
+
+function renderReport(list) {
+  const body = document.getElementById('report-body');
+  const empty = document.getElementById('report-empty');
+  const stats = document.getElementById('report-stats');
+  body.innerHTML = list.map(a => `
+    <tr>
+      <td>${a.client}</td><td>${a.service}</td>
+      <td>$${a.amount}</td><td>$${a.paid}</td>
+      <td>${a.date}</td><td>${a.staff}</td>
+      <td>${statusBadge(a.status)}</td>
+    </tr>`).join('');
+  empty.style.display = list.length ? 'none' : 'block';
+  const total = list.reduce((s,a) => s+a.amount, 0);
+  const paid  = list.reduce((s,a) => s+a.paid, 0);
+  const outstanding = total - paid;
+  const avg = list.length ? (total/list.length).toFixed(1) : 0;
+  stats.innerHTML = `
+    <div class="col-6 col-md-3"><div class="content-card p-3 text-center"><div class="fw-bold fs-4 text-success">$${total.toLocaleString()}</div><div class="text-muted small">Total revenue</div></div></div>
+    <div class="col-6 col-md-3"><div class="content-card p-3 text-center"><div class="fw-bold fs-4 text-primary">${list.length}</div><div class="text-muted small">Appointments</div></div></div>
+    <div class="col-6 col-md-3"><div class="content-card p-3 text-center"><div class="fw-bold fs-4 text-warning">$${outstanding}</div><div class="text-muted small">Outstanding</div></div></div>
+    <div class="col-6 col-md-3"><div class="content-card p-3 text-center"><div class="fw-bold fs-4 text-info">$${avg}</div><div class="text-muted small">Avg ticket</div></div></div>`;
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────
+let currentPeriod = 'today';
+
+function filterAppt(btn, period) {
+  currentPeriod = period;
+  document.querySelectorAll('.filter-tabs .btn').forEach(b => {
+    b.className = b === btn ? 'btn btn-primary btn-sm' : 'btn btn-outline-secondary btn-sm';
+  });
+  const order = { today:0, week:1, month:2, all:3 };
+  renderAppts(APPTS.filter(a => order[a.period] <= order[period]));
+  document.querySelector('#sec-dashboard h5').textContent =
+    period === 'today' ? "Today's Appointments" :
+    period === 'week'  ? "This Week's Appointments" :
+    period === 'month' ? "This Month's Appointments" : "All Appointments";
+}
+
+function filterClients() {
+  const q = document.getElementById('client-search').value.toLowerCase();
+  const s = document.getElementById('client-status').value;
+  renderClients(CLIENTS.filter(c =>
+    (c.name.toLowerCase().includes(q) || c.phone.includes(q)) &&
+    (!s || c.status === s)
+  ));
+}
+
+function filterStaff() {
+  const q = document.getElementById('staff-search').value.toLowerCase();
+  renderStaff(STAFF.filter(s => s.name.toLowerCase().includes(q) || s.role.toLowerCase().includes(q)));
+}
+
+function filterReport() {
+  const q = document.getElementById('report-search').value.toLowerCase();
+  renderReport(APPTS.filter(a => a.client.toLowerCase().includes(q)));
+}
+
+function clearReport() {
+  document.getElementById('report-search').value = '';
+  document.getElementById('report-from').value = '';
+  document.getElementById('report-to').value = '';
+  filterReport();
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+function show(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
 }
+
+// ── FORM HELPERS ──────────────────────────────────────────────────────────
+function fillPrice() {
+  const val = document.getElementById('appt-service').value;
+  document.getElementById('appt-amount').value = val ? '$' + val : '';
+}
+
+function demoSubmit() {
+  const toast = new bootstrap.Toast(document.getElementById('demo-toast'), { delay: 3000 });
+  toast.show();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderAppts(APPTS.filter(a => a.period === 'today'));
+renderClients(CLIENTS);
+renderStaff(STAFF);
+renderReport(APPTS);
 </script>
 </body>
 </html>
